@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TranslateService } from "@ngx-translate/core";
 import AOS from 'aos';
 import { LogoComponent } from './logo/logo.component';
@@ -13,6 +14,7 @@ import translationsDE from "../../public/i18n/de.json";
   selector: 'app-root',
   standalone: true,
   imports: [
+    CommonModule,
     RouterOutlet, 
     LogoComponent, 
     ButtonComponent, 
@@ -26,7 +28,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private translate: TranslateService
+    private translate: TranslateService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     translate.setTranslation('en', translationsEN);
     translate.setTranslation('de', translationsDE);
@@ -36,7 +39,10 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    AOS.init();
+    // Only initialize AOS in browser environment
+    if (isPlatformBrowser(this.platformId)) {
+      AOS.init();
+    }
   }
 
   shouldShowContactButton(): boolean {
