@@ -3,7 +3,8 @@
 
 header {
     position: relative;
-    height: 100dvh;
+    height: 100vh;
+    min-height: 100vh;
     background: linear-gradient(179.99deg, #FFFFFF 12.89%, v.$col-primary-light 91.39%);
     overflow-x: clip;
 }
@@ -329,4 +330,4 @@ app-bubble:nth-of-type(2) {
       
     }
   
-}  
+}

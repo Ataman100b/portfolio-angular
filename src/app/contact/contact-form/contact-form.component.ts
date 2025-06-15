@@ -1,6 +1,9 @@
 import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ValidationState } from '../../models/types';
+import { ValidationService } from '../../services/validation.service';
+import { FORM_VALIDATION } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-contact-form',
@@ -16,7 +19,7 @@ export class ContactFormComponent {
   @ViewChild('privacy') privacyEl!: ElementRef;
   @ViewChild('bubble') bubbleEl!: ElementRef;
 
-  isInputValid: { [input: string]: boolean } = {
+  isInputValid: ValidationState = {
     'name': false,
     'email': false,
     'message': false,
@@ -24,8 +27,13 @@ export class ContactFormComponent {
   }
 
   private translate = inject(TranslateService);
+  private validationService = inject(ValidationService);
 
   ngAfterViewInit() {
+    this.setupEventListeners();
+  }
+
+  private setupEventListeners(): void {
     this.nameEl.nativeElement.onblur = (event: Event) => this.onInputBlur(event);
     this.emailEl.nativeElement.onblur = (event: Event) => this.onInputBlur(event);
     this.messageEl.nativeElement.onblur = (event: Event) => this.onInputBlur(event);
@@ -48,13 +56,17 @@ export class ContactFormComponent {
    */
   onCheckboxChange(event: Event): void {
     const target = event.target as HTMLInputElement;
+    this.updateCheckboxValidation(target);
+  }
+
+  private updateCheckboxValidation(target: HTMLInputElement): void {
     const errorEl = document.getElementById(`${target.id}-error`);
     
     if (target.checked) {
-      errorEl!.style.display = 'none';
+      this.validationService.hideErrorMessage(errorEl);
       this.isInputValid[target.id] = true;
     } else {
-      errorEl!.style.display = 'inline';
+      this.validationService.showErrorMessage(errorEl);
       this.isInputValid[target.id] = false;
     }
   }
@@ -63,16 +75,16 @@ export class ContactFormComponent {
    * Displays a validation response for the input fields.
    * @param target Event target element (input, textarea).
    */
-  showValidationResponse(target: HTMLInputElement | HTMLTextAreaElement): void {
+  private showValidationResponse(target: HTMLInputElement | HTMLTextAreaElement): void {
     const errorEl = document.getElementById(`${target.id}-error`);
     
     if (!target.checkValidity()) {
-      target.style.background = "white url('/assets/icons/error.svg') no-repeat right 25px top 10px";
-      errorEl!.style.display = 'inline';
+      this.validationService.setValidationIcon(target, 'error');
+      this.validationService.showErrorMessage(errorEl);
       this.isInputValid[target.id] = false;
     } else {
-      target.style.background = "white url('/assets/icons/valid.svg') no-repeat right 25px top 10px";
-      errorEl!.style.display = 'none';
+      this.validationService.setValidationIcon(target, 'valid');
+      this.validationService.hideErrorMessage(errorEl);
       this.isInputValid[target.id] = true;
     }
   }
@@ -81,78 +93,93 @@ export class ContactFormComponent {
    * Sends an email with the filled in form data to the server.
    */
   async sendMail() {
-    const nameText = this.nameEl.nativeElement.value;
-    const emailText = this.emailEl.nativeElement.value;
-    const messageText = this.messageEl.nativeElement.value;
-    const bubbleEl = this.bubbleEl.nativeElement;
-    const isFormValid = this.isInputValid['name'] && this.isInputValid['email'] && this.isInputValid['message'] && this.isInputValid['privacy'];
-    const data = new FormData();
-
-    if (isFormValid) {
-      data.append('name', nameText);
-      data.append('mail', emailText);
-      data.append('message', messageText);
-      bubbleEl.style.display = 'inline';
-      bubbleEl.className = 'mail-bubble mail-animation';
+    if (this.isFormValid()) {
+      const formData = this.createFormData();
+      this.showMailAnimation();
       
-      await fetch('https://robin4consulting.com/send_mail.php',
-      {
-        method: 'post',
-        body: data
-      })
-      
+      await this.submitForm(formData);
       this.resetForm();
     }
+  }
+
+  private isFormValid(): boolean {
+    return this.isInputValid['name'] && 
+           this.isInputValid['email'] && 
+           this.isInputValid['message'] && 
+           this.isInputValid['privacy'];
+  }
+
+  private createFormData(): FormData {
+    const data = new FormData();
+    data.append('name', this.nameEl.nativeElement.value);
+    data.append('mail', this.emailEl.nativeElement.value);
+    data.append('message', this.messageEl.nativeElement.value);
+    return data;
+  }
+
+  private showMailAnimation(): void {
+    const bubbleEl = this.bubbleEl.nativeElement;
+    bubbleEl.style.display = 'inline';
+    bubbleEl.className = 'mail-bubble mail-animation';
+  }
+
+  private async submitForm(data: FormData): Promise<void> {
+    await fetch('https://robin4consulting.com/send_mail.php', {
+      method: 'post',
+      body: data
+    });
   }
 
   /**
    * Resets the form after the email has been send.
    */
-  resetForm() {
+  private resetForm(): void {
     this.resetInputElements();
     this.resetErrorMessages();
     this.resetInputValidation();
-    setTimeout(() => {this.resetBubble()}, 3000);
+    setTimeout(() => this.resetBubble(), FORM_VALIDATION.ANIMATION_DELAY);
   }
 
   /**
    * Resets the value and styling of the input elements.
    */
-  resetInputElements() {
+  private resetInputElements(): void {
     this.nameEl.nativeElement.value = '';
     this.emailEl.nativeElement.value = '';
     this.messageEl.nativeElement.value = '';
     this.privacyEl.nativeElement.checked = false;
     
-    this.nameEl.nativeElement.style.background = "white";
-    this.emailEl.nativeElement.style.background = "white";
-    this.messageEl.nativeElement.style.background = "white";
+    this.validationService.resetInputBackground(this.nameEl.nativeElement);
+    this.validationService.resetInputBackground(this.emailEl.nativeElement);
+    this.validationService.resetInputBackground(this.messageEl.nativeElement);
   }
 
   /**
    * Hides the error messages for failed validation.
    */
-  resetErrorMessages() {
-    document.getElementById(`name-error`)!.style.display = 'none';
-    document.getElementById(`email-error`)!.style.display = 'none';
-    document.getElementById(`message-error`)!.style.display = 'none';
-    document.getElementById(`privacy-error`)!.style.display = 'none';
+  private resetErrorMessages(): void {
+    this.validationService.hideErrorMessage(document.getElementById('name-error'));
+    this.validationService.hideErrorMessage(document.getElementById('email-error'));
+    this.validationService.hideErrorMessage(document.getElementById('message-error'));
+    this.validationService.hideErrorMessage(document.getElementById('privacy-error'));
   }
 
   /**
    * Resets the input validation.
    */
-  resetInputValidation() {
-    this.isInputValid['name'] = false;
-    this.isInputValid['email'] = false;
-    this.isInputValid['message'] = false;
-    this.isInputValid['privacy'] = false;
+  private resetInputValidation(): void {
+    this.isInputValid = {
+      'name': false,
+      'email': false,
+      'message': false,
+      'privacy': false
+    };
   }
 
   /**
    * Resets the mail info bubble.
    */
-  resetBubble() {
+  private resetBubble(): void {
     this.bubbleEl.nativeElement.style.display = 'none';
     this.bubbleEl.nativeElement.className = 'mail-bubble';
   }

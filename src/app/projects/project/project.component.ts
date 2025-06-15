@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ButtonComponent } from '../../button/button.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Project } from '../../models/types';
 
 @Component({
   selector: 'app-project',
@@ -10,12 +11,6 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent {
-  @Input() name: string = '';
-  @Input() description: string = '';
-  @Input() image: string = '';
-  @Input() technologies: string[] = [];
-  @Input() github: string = '';
-  @Input() demo: string = '';
-  @Input() project: any;
+  @Input() project!: Project;
   @Input() isSecondElement: boolean = false;
 }

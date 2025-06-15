@@ -1,14 +1,25 @@
-export type skill = {
-    skill: string,
-    alt: string,
-    iconUrl: string
+export interface Skill {
+    name: string;
+    icon: string;
+    alt?: string;
+    class?: string;
 }
 
-export type project = {
-    title: string,
-    stack: string,
-    description: string,
-    github: string,
+export interface Project {
+    title: string;
+    stack: string;
+    description: string;
+    github: string;
     projectUrl: string;
-    prevImageUrl: string
+    prevImageUrl: string;
+}
+
+export interface SocialLink {
+    name: string;
+    icon: string;
+    href: string;
+}
+
+export interface ValidationState {
+    [key: string]: boolean;
 }

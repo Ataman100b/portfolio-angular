@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Skill } from '../../models/types';
 
 @Component({
   selector: 'app-skill-grid',
@@ -7,7 +8,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./skill-grid.component.scss']
 })
 export class SkillGridComponent {
-  skills = [
+  skills: Skill[] = [
     { name: 'Angular', icon: 'assets/icons/angular_white.svg' },
     { name: 'TypeScript', icon: 'assets/icons/typescript_white.svg' },
     { name: 'JavaScript', icon: 'assets/icons/javascript_white.svg' },

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { SocialLink } from '../../models/types';
+import { SOCIAL_LINKS } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-social-media-header',
@@ -7,21 +9,21 @@ import { Component } from '@angular/core';
   styleUrls: ['./social-media-header.component.scss']
 })
 export class SocialMediaHeaderComponent {
-  socialLinks = [
+  socialLinks: SocialLink[] = [
     { 
       name: 'GitHub', 
       icon: 'assets/icons/github_blue.svg', 
-      href: 'https://github.com/RobinAngele/' 
+      href: SOCIAL_LINKS.GITHUB 
     },
     { 
       name: 'LinkedIn', 
       icon: 'assets/icons/linked-in_blue.svg', 
-      href: 'https://www.linkedin.com/in/robin-angelé/' 
+      href: SOCIAL_LINKS.LINKEDIN 
     },
     { 
       name: 'Email', 
       icon: 'assets/icons/mail_blue.svg', 
-      href: 'mailto:frontend@robin4consulting.com' 
+      href: SOCIAL_LINKS.EMAIL 
     }
   ];
 }

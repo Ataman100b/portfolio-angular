@@ -3,9 +3,6 @@ import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TranslateService } from "@ngx-translate/core";
 import AOS from 'aos';
-import { LogoComponent } from './logo/logo.component';
-import { ButtonComponent } from './button/button.component';
-import { BubbleComponent } from './bubble/bubble.component';
 // Import the translations
 import translationsEN from "../../public/i18n/en.json";
 import translationsDE from "../../public/i18n/de.json";
@@ -15,10 +12,7 @@ import translationsDE from "../../public/i18n/de.json";
   standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet, 
-    LogoComponent, 
-    ButtonComponent, 
-    BubbleComponent
+    RouterOutlet
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -31,15 +25,22 @@ export class AppComponent implements OnInit {
     private translate: TranslateService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    translate.setTranslation('en', translationsEN);
-    translate.setTranslation('de', translationsDE);
+    this.initializeTranslations();
+  }
+
+  ngOnInit() {
+    this.initializeAOS();
+  }
+
+  private initializeTranslations(): void {
+    this.translate.setTranslation('en', translationsEN);
+    this.translate.setTranslation('de', translationsDE);
     this.translate.addLangs(['de', 'en']);
     this.translate.setDefaultLang('en');
     this.translate.use('en');
   }
 
-  ngOnInit() {
-    // Only initialize AOS in browser environment
+  private initializeAOS(): void {
     if (isPlatformBrowser(this.platformId)) {
       AOS.init();
     }

@@ -19,19 +19,29 @@ export class PrivacyPolicyComponent {
     private translate: TranslateService
   ) {
     this.currentLang = this.translate.currentLang || 'en';
-    this.titleService.setTitle('Privacy Policy | Robin Angelé');
+    this.setPageTitle();
+    this.setupLanguageChangeSubscription();
+  }
 
-    // Update title based on current language
+  private setPageTitle(): void {
+    this.titleService.setTitle('Privacy Policy | Robin Angelé');
+  }
+
+  private setupLanguageChangeSubscription(): void {
     this.translate.onLangChange.subscribe(() => {
-      if (this.translate.currentLang === 'de') {
-        this.titleService.setTitle('Datenschutz | Robin Angelé');
-      } else {
-        this.titleService.setTitle('Privacy Policy | Robin Angelé');
-      }
+      this.updateTitleBasedOnLanguage();
     });
   }
 
-  switchLanguage(lang: string) {
+  private updateTitleBasedOnLanguage(): void {
+    if (this.translate.currentLang === 'de') {
+      this.titleService.setTitle('Datenschutz | Robin Angelé');
+    } else {
+      this.titleService.setTitle('Privacy Policy | Robin Angelé');
+    }
+  }
+
+  switchLanguage(lang: string): void {
     this.translate.use(lang);
     this.currentLang = lang;
   }

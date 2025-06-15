@@ -10,12 +10,6 @@ import { NgIf } from '@angular/common';
   styleUrls: ['./navmenu.component.scss']
 })
 export class NavmenuComponent {
-  menuItems = [
-    { label: 'About', link: '#about' },
-    { label: 'Skills', link: '#skills' },
-    { label: 'Projects', link: '#projects' }
-  ];
-
   isMenuOpen = false;
   currentLang: string;
 
@@ -23,15 +17,15 @@ export class NavmenuComponent {
     this.currentLang = this.translate.currentLang || 'en';
   }
 
-  toggleMenu() {
+  toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  closeMenu() {
+  closeMenu(): void {
     this.isMenuOpen = false;
   }
   
-  switchLanguage(lang: string) {
+  switchLanguage(lang: string): void {
     this.translate.use(lang);
     this.currentLang = lang;
     this.closeMenu();

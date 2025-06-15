@@ -11,6 +11,7 @@ form {
 .input-container {
     position: relative;
     display: flex;
+    min-height: 75px; /* Reserve space for error messages */
 
     input,
     textarea {
@@ -19,6 +20,7 @@ form {
         border: 1px solid v.$col-primary;
         border-radius: 10px;
         padding: 15px 22px;
+        outline: none;
 
         &:hover,
         &:focus {
@@ -26,9 +28,9 @@ form {
             outline: 1px solid v.$col-primary;
         }
 
-        &:-internal-autofill-selected {
-            appearance: none;
-            background: transparent;
+        &:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 30px white inset !important;
+            -webkit-text-fill-color: v.$col-dark !important;
         }
     }
 
@@ -71,14 +73,18 @@ form {
         display: none;
         font-size: v.$fs-12;
         color: v.$col-error;
+        height: 16px; /* Fixed height to prevent layout shifts */
+        margin: 0;
+        line-height: 16px;
     }
 }
 
 .checkbox-container {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     position: relative;
+    min-height: 60px; /* Reserve space for error messages */
 
     input[type="checkbox"] {
         width: 20px;
@@ -119,6 +125,9 @@ form {
         display: none;
         font-size: v.$fs-12;
         color: v.$col-error;
+        height: 16px; /* Fixed height to prevent layout shifts */
+        margin: 0;
+        line-height: 16px;
     }
 }
 

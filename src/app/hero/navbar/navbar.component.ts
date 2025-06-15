@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { NgIf } from '@angular/common';
+import { FORM_VALIDATION } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +12,6 @@ import { NgIf } from '@angular/common';
 })
 export class NavbarComponent {
   scrolled = false;
-  menuOpen = false;
   currentLang: string;
 
   constructor(private translate: TranslateService) {
@@ -19,19 +19,11 @@ export class NavbarComponent {
   }
 
   @HostListener('window:scroll', ['$event'])
-  onScroll() {
-    if (window.scrollY > 20) {
-      this.scrolled = true;
-    } else {
-      this.scrolled = false;
-    }
+  onScroll(): void {
+    this.scrolled = window.scrollY > FORM_VALIDATION.SCROLL_THRESHOLD;
   }
 
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
-  }
-
-  switchLanguage(lang: string) {
+  switchLanguage(lang: string): void {
     this.translate.use(lang);
     this.currentLang = lang;
   }
