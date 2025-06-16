@@ -103,17 +103,23 @@ app-bubble:nth-of-type(1) {
 
 @media screen and (max-width: v.$m-mobile-md) {
     .introduction-area {
-        gap: 35px;
+        gap: 55px;
         padding-top: 150px;
         padding-bottom: v.$area-spacing-sm;
 
         h2 {
             .icons-container {
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                margin-left: 5vw;
+
                 gap: 15px;
 
-                .remote-icon,
                 .located-icon {
                     width: 200px;
+                    margin-left: 8vw;
+                 
                 }
             }
         }

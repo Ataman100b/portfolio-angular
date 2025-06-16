@@ -344,7 +344,7 @@ app-bubble:nth-of-type(2) {
     }
 
     .navigation {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
@@ -356,8 +356,6 @@ app-bubble:nth-of-type(2) {
         z-index: 1000;
         box-shadow: none;
         min-height: 60px;
-        
-        // Ensure navbar content is properly spaced
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -365,20 +363,20 @@ app-bubble:nth-of-type(2) {
 
     .hero-container {
         position: absolute;
-        height: 100vh;
+        height: calc(100vh - 80px);
         left: 0;
         right: 0;
-        top: 0;
+        top: 80px;
         bottom: 0;
-        padding-top: 80px; // Space for transparent navbar
-        gap: 8px; // Reduced gap to push text lower
+        padding-top: 130px;
+        gap: 8px;
         padding-left: 16px;
         padding-right: 16px;
         display: flex;
         flex-direction: column-reverse;
         align-items: center;
-        justify-content: flex-end; // Changed from center to flex-end to push text lower
-        padding-bottom: 60px; // Added bottom padding to create space from bottom
+        justify-content: flex-start; // Changed to flex-start to control positioning better
+        padding-bottom: 60px;
 
         div {
             height: auto;
@@ -390,15 +388,19 @@ app-bubble:nth-of-type(2) {
             min-height: 300px;
             object-fit: cover;
             object-position: bottom;
-            transform: scale(1.8) translateY();
+            transform: scale(1.8) translateY(30);
+            flex-shrink: 0;
+            order: 2; // Put image at bottom
         }
 
         .greeting {
             align-items: center;
             font-size: 4vw;
             padding: 20px;
-            margin-bottom: 0; // Removed bottom margin
-            margin-top: 60px; // Increased top margin to push text lower
+            margin-bottom: 0 !important; // Override other breakpoints
+            margin-top: 120px !important; // Push text down with !important
+            flex-shrink: 0;
+            order: 1; // Put text at top
 
             p {
                 color: white;
